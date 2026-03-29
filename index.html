@@ -710,7 +710,51 @@ select:focus, input:focus {
 
   <!-- FORM CARD -->
   <div class="card" id="formCard">
-    <!-- Steps will be added in subsequent commits -->
+    <!-- STEP 1: Roof Age -->
+    <div class="step active" id="step1">
+      <h2 class="step-title">When was your roof installed?</h2>
+      <p class="step-subtitle">This helps us estimate how old your roof is.</p>
+
+      <label class="form-label">Installation Year</label>
+      <select id="installYear" onchange="handleYearSelect()">
+        <option value="">Select a year...</option>
+      </select>
+
+      <div style="margin-top: 14px;">
+        <label class="check-option" id="dontKnowOpt" onclick="toggleDontKnow()">
+          <div class="dot"></div>
+          <span class="opt-text">I don't know when my roof was installed</span>
+        </label>
+      </div>
+
+      <div class="follow-up" id="followUp">
+        <label class="form-label">When did you buy this home?</label>
+        <select id="purchaseYear" onchange="checkFollowUp()">
+          <option value="">Select a year...</option>
+        </select>
+        <div style="margin-top: 14px;">
+          <label class="form-label">Was the roof new when you bought the home?</label>
+          <div style="display: flex; gap: 10px;">
+            <label class="check-option" style="flex:1; margin:0;" id="roofNewYes" onclick="setRoofNew('yes')">
+              <div class="dot"></div>
+              <span class="opt-text">Yes</span>
+            </label>
+            <label class="check-option" style="flex:1; margin:0;" id="roofNewNo" onclick="setRoofNew('no')">
+              <div class="dot"></div>
+              <span class="opt-text">No / Not sure</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn1" disabled onclick="goToStep(2)">
+          Continue
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
   </div>
 
 </div><!-- /container -->
