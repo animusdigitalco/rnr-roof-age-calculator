@@ -955,6 +955,46 @@ select:focus, input:focus {
       <p id="dykText"></p>
     </div>
 
+    <!-- CTA -->
+    <div class="cta-section" id="ctaSection">
+      <div class="cta-urgent" id="ctaUrgent">Don't wait for a leak &mdash; proactive replacement saves thousands.</div>
+      <h2>Schedule a <span style="color: var(--blue);">FREE</span> Roof Inspection</h2>
+      <p class="cta-sub">Our team will come out, assess your roof in person, and give you an honest evaluation. No pressure, no cost.</p>
+
+      <div class="cta-phone">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--blue)"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.58 1 1 0 01-.25 1.01l-2.2 2.2z"/></svg>
+        <a href="tel:9183793710">(918) 379-3710</a>
+      </div>
+
+      <div class="cta-divider">or fill out the form</div>
+
+      <div class="contact-form" id="contactForm">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="cfName" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" id="cfPhone" placeholder="(555) 123-4567">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="cfEmail" placeholder="email@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Property Address</label>
+          <input type="text" id="cfAddress" placeholder="123 Main St, City, OK">
+        </div>
+        <button class="btn btn-cta" onclick="submitForm()">Request My Free Inspection</button>
+      </div>
+
+      <div class="form-success" id="formSuccess">
+        <div class="check-circle">&#10003;</div>
+        <h3>Request Submitted!</h3>
+        <p style="color: #777;">We'll be in touch within 24 hours to schedule your free roof inspection.</p>
+      </div>
+    </div>
+
   </div><!-- /results -->
 
 </div><!-- /container -->
