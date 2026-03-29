@@ -999,6 +999,325 @@ select:focus, input:focus {
 
 </div><!-- /container -->
 
+<script>
+// ========== STATE ==========
+const state = {
+  installYear: null,
+  dontKnow: false,
+  purchaseYear: null,
+  roofNew: null,
+  material: null,
+  maintenance: null,
+  exposure: null,
+  currentStep: 1
+};
+
+// ========== LIFE EXPECTANCY DATA ==========
+const lifeData = {
+  '3tab':   { min: 15, max: 20, name: '3-Tab Shingle' },
+  'arch':   { min: 25, max: 30, name: 'Architectural Shingle' },
+  'metal':  { min: 40, max: 70, name: 'Metal' },
+  'tile':   { min: 50, max: 100, name: 'Clay / Concrete Tile' },
+  'wood':   { min: 20, max: 30, name: 'Wood Shake' },
+  'flat':   { min: 15, max: 25, name: 'Flat / TPO / EPDM' },
+  'slate':  { min: 75, max: 150, name: 'Slate' },
+  'unsure': { min: 20, max: 25, name: 'Assumed Shingle' }
+};
+
+const okFacts = [
+  "Oklahoma averages 8-10 hail events per year. In Tornado Alley, roofs take more punishment than almost anywhere in the country. Even roofs that look fine from the ground can have hidden hail damage.",
+  "Temperature swings of 50+ degrees in a single day are common in Oklahoma. These extreme cycles cause roofing materials to expand and contract repeatedly, accelerating wear and shortening lifespan.",
+  "Oklahoma's straight-line winds regularly exceed 60 mph during storm season. These winds can lift shingle tabs, break seals, and create vulnerabilities that lead to leaks months later.",
+  "Insurance claims for roof damage in Oklahoma are among the highest in the nation. Many homeowners don't realize they have storm damage until a small leak becomes a major problem.",
+  "UV exposure in Oklahoma is intense during summer months, breaking down asphalt shingles at the molecular level. South-facing roof slopes typically age 20-30% faster than north-facing ones."
+];
+
+// ========== INIT ==========
+(function init() {
+  const currentYear = new Date().getFullYear();
+  const yearSelects = [document.getElementById('installYear'), document.getElementById('purchaseYear')];
+  yearSelects.forEach(sel => {
+    for (let y = currentYear; y >= 1950; y--) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      sel.appendChild(opt);
+    }
+  });
+  updateProgress();
+})();
+
+// ========== STEP 1 HANDLERS ==========
+function handleYearSelect() {
+  const val = document.getElementById('installYear').value;
+  if (val) {
+    state.installYear = parseInt(val);
+    state.dontKnow = false;
+    document.getElementById('dontKnowOpt').classList.remove('selected');
+    document.getElementById('followUp').classList.remove('visible');
+    document.getElementById('btn1').disabled = false;
+  } else {
+    state.installYear = null;
+    checkStep1();
+  }
+}
+
+function toggleDontKnow() {
+  state.dontKnow = !state.dontKnow;
+  const el = document.getElementById('dontKnowOpt');
+  const fu = document.getElementById('followUp');
+
+  if (state.dontKnow) {
+    el.classList.add('selected');
+    fu.classList.add('visible');
+    document.getElementById('installYear').value = '';
+    state.installYear = null;
+    checkStep1();
+  } else {
+    el.classList.remove('selected');
+    fu.classList.remove('visible');
+    state.purchaseYear = null;
+    state.roofNew = null;
+    document.getElementById('btn1').disabled = true;
+  }
+}
+
+function checkFollowUp() {
+  const val = document.getElementById('purchaseYear').value;
+  state.purchaseYear = val ? parseInt(val) : null;
+  checkStep1();
+}
+
+function setRoofNew(val) {
+  state.roofNew = val;
+  document.getElementById('roofNewYes').classList.toggle('selected', val === 'yes');
+  document.getElementById('roofNewNo').classList.toggle('selected', val === 'no');
+  checkStep1();
+}
+
+function checkStep1() {
+  if (state.dontKnow && state.purchaseYear && state.roofNew) {
+    if (state.roofNew === 'yes') {
+      state.installYear = state.purchaseYear;
+    } else {
+      state.installYear = state.purchaseYear - 5;
+    }
+    document.getElementById('btn1').disabled = false;
+  } else if (!state.dontKnow && state.installYear) {
+    document.getElementById('btn1').disabled = false;
+  } else {
+    document.getElementById('btn1').disabled = true;
+  }
+}
+
+// ========== STEP 2 ==========
+function selectMaterial(el, val) {
+  document.querySelectorAll('#materialGrid .option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.material = val;
+  document.getElementById('btn2').disabled = false;
+}
+
+// ========== STEP 3 ==========
+function selectMaint(el, val) {
+  const siblings = el.parentElement.querySelectorAll('.check-option');
+  siblings.forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  state.maintenance = val;
+  document.getElementById('btn3').disabled = false;
+}
+
+// ========== STEP 4 ==========
+function selectExposure(el, val) {
+  const siblings = el.parentElement.querySelectorAll('.check-option');
+  siblings.forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  state.exposure = val;
+  document.getElementById('btn4').disabled = false;
+}
+
+// ========== NAVIGATION ==========
+function goToStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  state.currentStep = n;
+  updateProgress();
+  window.scrollTo({ top: 200, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const pct = (state.currentStep / 4) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = 'Step ' + state.currentStep + ' of 4';
+}
+
+// ========== CALCULATE ==========
+function calculateResults() {
+  const currentYear = new Date().getFullYear();
+  const roofAge = currentYear - state.installYear;
+  const mat = lifeData[state.material] || lifeData['unsure'];
+
+  // Base life: midpoint
+  let baseLife = (mat.min + mat.max) / 2;
+
+  // Oklahoma weather penalty: 20% average reduction
+  let okPenalty = 0.20;
+  if (state.exposure === 'rural') okPenalty = 0.25;
+  else if (state.exposure === 'sheltered') okPenalty = 0.15;
+  else if (state.exposure === 'suburban') okPenalty = 0.18;
+
+  baseLife *= (1 - okPenalty);
+
+  // Maintenance penalty
+  if (state.maintenance === 'poor') baseLife *= 0.80;
+  else if (state.maintenance === 'ok') baseLife *= 0.92;
+  else if (state.maintenance === 'unsure') baseLife *= 0.88;
+  // 'good' = no penalty
+
+  // Tree exposure penalty
+  if (state.exposure === 'trees') baseLife *= 0.90;
+
+  const expectedLife = Math.round(baseLife);
+  const remaining = Math.max(0, expectedLife - roofAge);
+  const pctRemaining = expectedLife > 0 ? Math.min(100, Math.round((remaining / expectedLife) * 100)) : 0;
+  const pctUsed = 100 - pctRemaining;
+
+  // Risk level
+  let risk, riskColor, riskBg;
+  if (pctRemaining > 50) {
+    risk = 'Good Condition';
+    riskColor = '#2ecc71';
+    riskBg = 'rgba(46, 204, 113, 0.1)';
+  } else if (pctRemaining > 25) {
+    risk = 'Watch Closely';
+    riskColor = '#f1c40f';
+    riskBg = 'rgba(241, 196, 15, 0.1)';
+  } else if (pctRemaining > 10) {
+    risk = 'Replace Soon';
+    riskColor = '#e67e22';
+    riskBg = 'rgba(230, 126, 34, 0.1)';
+  } else {
+    risk = 'Urgent — Act Now';
+    riskColor = '#e74c3c';
+    riskBg = 'rgba(231, 76, 60, 0.1)';
+  }
+
+  // Hide form, show results
+  document.getElementById('formCard').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('resultsSection').classList.add('active');
+
+  // Stats
+  document.getElementById('statAge').textContent = roofAge + ' yrs';
+  document.getElementById('statExpected').textContent = expectedLife + ' yrs';
+  document.getElementById('statRemaining').textContent = remaining > 0 ? remaining + ' yrs' : '0';
+
+  // Risk badge
+  const badge = document.getElementById('riskBadge');
+  badge.style.background = riskBg;
+  badge.style.color = riskColor;
+  badge.innerHTML = '<span style="width:10px;height:10px;border-radius:50%;background:' + riskColor + ';display:inline-block;"></span> ' + risk;
+
+  // Bar labels
+  document.getElementById('barLabelStart').textContent = state.installYear;
+  document.getElementById('barLabelEnd').textContent = (state.installYear + expectedLife);
+
+  // Animate gauge (semicircle = 50% of full circle = 157.08 of 314.16)
+  setTimeout(() => {
+    const arc = document.getElementById('gaugeArc');
+    const fillAmount = (pctRemaining / 100) * 157.08;
+    arc.style.strokeDashoffset = (314.16 - fillAmount);
+    arc.style.stroke = riskColor;
+
+    // Animate percent number
+    animateValue('gaugePercent', 0, pctRemaining, 1200, '%');
+
+    // Life bar
+    const barPct = Math.min(100, (roofAge / expectedLife) * 100);
+    document.getElementById('lifeBarFill').style.width = barPct + '%';
+    document.getElementById('lifeBarFill').style.background = 'linear-gradient(90deg, ' + riskColor + ', ' + riskColor + 'aa)';
+    document.getElementById('lifeBarMarker').style.left = barPct + '%';
+  }, 300);
+
+  // Recommendations
+  buildRecs(risk, remaining, mat.name, roofAge, expectedLife, pctRemaining);
+
+  // Did You Know
+  document.getElementById('dykText').textContent = okFacts[Math.floor(Math.random() * okFacts.length)];
+
+  // Urgent CTA
+  if (pctRemaining <= 25) {
+    document.getElementById('ctaUrgent').style.display = 'block';
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function animateValue(id, start, end, duration, suffix) {
+  const el = document.getElementById(id);
+  const range = end - start;
+  const startTime = performance.now();
+
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(start + range * eased);
+    el.textContent = current + (suffix || '');
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function buildRecs(risk, remaining, matName, age, expected, pctRemaining) {
+  const list = document.getElementById('recsList');
+  let recs = [];
+
+  if (pctRemaining > 50) {
+    recs.push({ icon: '&#10003;', color: 'var(--green)', bg: 'rgba(46,204,113,0.12)', text: 'Your ' + matName + ' roof is in good shape. Continue with regular maintenance to maximize its lifespan.' });
+    recs.push({ icon: '&#128269;', color: 'var(--blue)', bg: 'rgba(0,174,239,0.12)', text: 'Schedule an annual professional inspection to catch small issues before they become expensive repairs.' });
+    recs.push({ icon: '&#9729;', color: '#888', bg: 'rgba(0,0,0,0.06)', text: 'After any major Oklahoma storm, walk around your property and look for debris or visible damage. Call a pro if anything looks off.' });
+  } else if (pctRemaining > 25) {
+    recs.push({ icon: '&#9888;', color: 'var(--orange)', bg: 'rgba(230,126,34,0.12)', text: 'Your roof is past the halfway mark. Now is the time to start planning for a replacement in the next ' + remaining + ' years.' });
+    recs.push({ icon: '&#128269;', color: 'var(--blue)', bg: 'rgba(0,174,239,0.12)', text: 'Get a professional inspection now to understand the exact condition. Hidden damage could shorten the timeline.' });
+    recs.push({ icon: '&#128176;', color: 'var(--green)', bg: 'rgba(46,204,113,0.12)', text: 'Start budgeting for replacement. A new ' + matName + ' roof is an investment that protects everything inside your home.' });
+  } else if (pctRemaining > 10) {
+    recs.push({ icon: '&#9888;', color: 'var(--red)', bg: 'rgba(231,76,60,0.12)', text: 'Your roof is nearing end of life with an estimated ' + remaining + ' years remaining. Replacement should be a top priority.' });
+    recs.push({ icon: '&#128269;', color: 'var(--blue)', bg: 'rgba(0,174,239,0.12)', text: 'A professional inspection is critical right now. We can identify if emergency repairs are needed before full replacement.' });
+    recs.push({ icon: '&#127968;', color: 'var(--dark)', bg: 'rgba(0,0,0,0.06)', text: 'Consider upgrading to a more durable material. Architectural shingles or metal roofing can handle Oklahoma weather much better.' });
+    recs.push({ icon: '&#128176;', color: 'var(--green)', bg: 'rgba(46,204,113,0.12)', text: 'Many homeowners finance their new roof. We can walk you through options that fit your budget.' });
+  } else {
+    recs.push({ icon: '&#9888;', color: 'var(--red)', bg: 'rgba(231,76,60,0.12)', text: 'Your roof has exceeded or nearly exceeded its expected lifespan. Replacement is urgently recommended to prevent leaks and structural damage.' });
+    recs.push({ icon: '&#128167;', color: 'var(--blue)', bg: 'rgba(0,174,239,0.12)', text: 'At this age, even minor storms can cause major failures. Water damage to your interior can cost 5-10x more than a proactive replacement.' });
+    recs.push({ icon: '&#128269;', color: 'var(--orange)', bg: 'rgba(230,126,34,0.12)', text: 'Schedule a free inspection immediately. We\'ll give you an honest assessment and a clear plan of action.' });
+    recs.push({ icon: '&#127968;', color: 'var(--dark)', bg: 'rgba(0,0,0,0.06)', text: 'A new roof also increases your home\'s value by an average of $12,000-$15,000 and makes it significantly more attractive to buyers.' });
+  }
+
+  list.innerHTML = recs.map(r =>
+    '<div class="rec-item">' +
+      '<div class="rec-icon" style="background:' + r.bg + ';color:' + r.color + ';">' + r.icon + '</div>' +
+      '<div class="rec-text">' + r.text + '</div>' +
+    '</div>'
+  ).join('');
+}
+
+// ========== CONTACT FORM ==========
+function submitForm() {
+  const name = document.getElementById('cfName').value.trim();
+  const phone = document.getElementById('cfPhone').value.trim();
+  const email = document.getElementById('cfEmail').value.trim();
+
+  if (!name || !phone) {
+    alert('Please enter at least your name and phone number.');
+    return;
+  }
+
+  // In production, this would submit to a server/CRM
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+}
+</script>
+
 <footer class="site-footer">
   <p>&copy; 2026 R&R Roofing and Construction. All rights reserved. | <a href="https://rnrroofingok.com">rnrroofingok.com</a></p>
 </footer>
