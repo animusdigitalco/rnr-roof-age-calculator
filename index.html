@@ -755,7 +755,126 @@ select:focus, input:focus {
       </div>
     </div>
 
-  </div>
+    <!-- STEP 2: Material -->
+    <div class="step" id="step2">
+      <h2 class="step-title">What type of roofing material?</h2>
+      <p class="step-subtitle">Different materials have very different lifespans.</p>
+
+      <div class="option-grid" id="materialGrid">
+        <div class="option-card" onclick="selectMaterial(this, '3tab')" data-val="3tab">
+          <span class="icon">&#9650;</span>
+          <span class="label">3-Tab Shingle</span>
+          <span class="sublabel">Most common, basic</span>
+        </div>
+        <div class="option-card" onclick="selectMaterial(this, 'arch')" data-val="arch">
+          <span class="icon">&#9649;</span>
+          <span class="label">Architectural Shingle</span>
+          <span class="sublabel">Dimensional, premium</span>
+        </div>
+        <div class="option-card" onclick="selectMaterial(this, 'metal')" data-val="metal">
+          <span class="icon">&#11044;</span>
+          <span class="label">Metal</span>
+          <span class="sublabel">Standing seam / panels</span>
+        </div>
+        <div class="option-card" onclick="selectMaterial(this, 'tile')" data-val="tile">
+          <span class="icon">&#9645;</span>
+          <span class="label">Clay / Concrete Tile</span>
+          <span class="sublabel">Heavy, durable</span>
+        </div>
+        <div class="option-card" onclick="selectMaterial(this, 'wood')" data-val="wood">
+          <span class="icon">&#9618;</span>
+          <span class="label">Wood Shake</span>
+          <span class="sublabel">Cedar, natural look</span>
+        </div>
+        <div class="option-card" onclick="selectMaterial(this, 'flat')" data-val="flat">
+          <span class="icon">&#9644;</span>
+          <span class="label">Flat / TPO / EPDM</span>
+          <span class="sublabel">Low slope / flat roof</span>
+        </div>
+        <div class="option-card" onclick="selectMaterial(this, 'slate')" data-val="slate">
+          <span class="icon">&#9670;</span>
+          <span class="label">Slate</span>
+          <span class="sublabel">Premium stone</span>
+        </div>
+        <div class="option-card" onclick="selectMaterial(this, 'unsure')" data-val="unsure">
+          <span class="icon">?</span>
+          <span class="label">Not Sure</span>
+          <span class="sublabel">We can check for you</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goToStep(1)">Back</button>
+        <button class="btn btn-primary" id="btn2" disabled onclick="goToStep(3)">
+          Continue
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Maintenance -->
+    <div class="step" id="step3">
+      <h2 class="step-title">How well maintained is your roof?</h2>
+      <p class="step-subtitle">Regular maintenance can significantly extend roof life.</p>
+
+      <label class="check-option" onclick="selectMaint(this, 'good')">
+        <div class="dot"></div>
+        <span class="opt-text">Regular professional inspections</span>
+      </label>
+      <label class="check-option" onclick="selectMaint(this, 'ok')">
+        <div class="dot"></div>
+        <span class="opt-text">Occasional maintenance</span>
+      </label>
+      <label class="check-option" onclick="selectMaint(this, 'poor')">
+        <div class="dot"></div>
+        <span class="opt-text">Minimal or no maintenance</span>
+      </label>
+      <label class="check-option" onclick="selectMaint(this, 'unsure')">
+        <div class="dot"></div>
+        <span class="opt-text">Not sure</span>
+      </label>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goToStep(2)">Back</button>
+        <button class="btn btn-primary" id="btn3" disabled onclick="goToStep(4)">
+          Continue
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Exposure -->
+    <div class="step" id="step4">
+      <h2 class="step-title">What's your roof's weather exposure?</h2>
+      <p class="step-subtitle">Oklahoma weather is tough on roofs. Your surroundings matter.</p>
+
+      <label class="check-option" onclick="selectExposure(this, 'sheltered')">
+        <div class="dot"></div>
+        <span class="opt-text">Urban / sheltered area</span>
+      </label>
+      <label class="check-option" onclick="selectExposure(this, 'suburban')">
+        <div class="dot"></div>
+        <span class="opt-text">Suburban neighborhood</span>
+      </label>
+      <label class="check-option" onclick="selectExposure(this, 'rural')">
+        <div class="dot"></div>
+        <span class="opt-text">Rural / exposed to open wind</span>
+      </label>
+      <label class="check-option" onclick="selectExposure(this, 'trees')">
+        <div class="dot"></div>
+        <span class="opt-text">Near trees &mdash; heavy debris</span>
+      </label>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goToStep(3)">Back</button>
+        <button class="btn btn-primary" id="btn4" onclick="calculateResults()">
+          See My Results
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /card -->
 
 </div><!-- /container -->
 
