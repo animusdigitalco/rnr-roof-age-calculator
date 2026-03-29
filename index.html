@@ -876,6 +876,87 @@ select:focus, input:focus {
 
   </div><!-- /card -->
 
+  <!-- RESULTS -->
+  <div class="results-section" id="resultsSection">
+
+    <div class="card">
+      <div class="gauge-wrap">
+        <h2 class="step-title" style="margin-bottom: 4px;">Your Roof Assessment</h2>
+        <p class="step-subtitle" style="margin-bottom: 24px;">Based on your answers, here's where your roof stands.</p>
+
+        <!-- Semicircle gauge -->
+        <div class="gauge-container">
+          <svg class="gauge-bg" viewBox="0 0 240 240">
+            <circle cx="120" cy="120" r="100" stroke-dasharray="314.16" stroke-dashoffset="-157.08" transform="rotate(180 120 120)"/>
+          </svg>
+          <svg class="gauge-fill" viewBox="0 0 240 240">
+            <circle id="gaugeArc" cx="120" cy="120" r="100" stroke-dasharray="314.16" stroke-dashoffset="314.16" transform="rotate(180 120 120)"/>
+          </svg>
+          <div class="gauge-center">
+            <div class="gauge-percent" id="gaugePercent">0%</div>
+            <div class="gauge-label-sm">Life Remaining</div>
+          </div>
+        </div>
+
+        <div class="risk-badge" id="riskBadge"></div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-box">
+          <div>
+            <div class="stat-value" id="statAge">--</div>
+            <div class="stat-label">Roof Age</div>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div>
+            <div class="stat-value" id="statExpected">--</div>
+            <div class="stat-label">Expected Life</div>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div>
+            <div class="stat-value" id="statRemaining">--</div>
+            <div class="stat-label">Years Left</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Life Bar -->
+      <div class="life-bar-wrap">
+        <div class="life-bar-header">
+          <span class="life-bar-title">Roof Lifespan Timeline</span>
+        </div>
+        <div style="position: relative; padding-top: 28px;">
+          <div class="life-bar-marker" id="lifeBarMarker">
+            <div class="life-bar-marker-label" id="markerLabel">Today</div>
+          </div>
+          <div class="life-bar-track">
+            <div class="life-bar-fill" id="lifeBarFill"></div>
+          </div>
+        </div>
+        <div class="life-bar-labels">
+          <span id="barLabelStart">Installed</span>
+          <span id="barLabelEnd">End of Life</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="recs-card" id="recsCard">
+      <h3>Our Recommendations</h3>
+      <div id="recsList"></div>
+    </div>
+
+    <!-- Did You Know -->
+    <div class="dyk-card">
+      <h3>Did You Know?</h3>
+      <p id="dykText"></p>
+    </div>
+
+  </div><!-- /results -->
+
 </div><!-- /container -->
 
 <footer class="site-footer">
